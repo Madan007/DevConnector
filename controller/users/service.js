@@ -5,18 +5,19 @@ const { SECRET_KEY } = require('../../config/keys');
 const util = require('util');
 
 const User = require('../../models/User');
+const { validateRegisterInput } = require('./validation');
 
 util.promisify(bcrypt.genSalt);
 util.promisify(bcrypt.hash);
 util.promisify(jwt.sign);
 
 exports.register = async (name, email, password) => {
-  const userDetail = await User.findOne({ email: req.body.email });
+  const userDetail = await User.findOne({ email: email });
   if (userDetail) {
     throw { message: 'Email Already Exists' };
   }
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(newUser.password, salt);
+  const hash = await bcrypt.hash(password, salt);
 
   const newUser = new User({
     name,
@@ -24,7 +25,6 @@ exports.register = async (name, email, password) => {
     avatar: null,
     password: hash,
   });
-
   const user = await newUser.save();
   return user;
 };

@@ -11,7 +11,7 @@ exports.testAuth = async (req, res, next) => {
 
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body;
-  userService.register(name, email, password);
+  const user = await userService.register(name, email, password);
   return res.json(user);
 };
 

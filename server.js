@@ -17,12 +17,13 @@ mongoose
 
 const port = process.env.PORT || 5000;
 
+app.use(bodyParser.json());
+
 // Passport Configuration
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
 app.use(rootUrl, authenticate, routes);
-app.use(bodyParser.json());
 
 app.use('*', (req, res) => {
   return res.status(404).json({ messsage: 'Not Found' });
@@ -30,7 +31,15 @@ app.use('*', (req, res) => {
 
 app.use((err, req, res, next) => {
   console.log('Caught Error in Application please handle it!', err);
-  res.json({ message: err.message || 'Internal Server Error' });
+  let errorMessage = '';
+  if (err.name === 'ValidationError') {
+    const errorMessages = Object.keys(err.errors).map((field) =>
+      err.errors[field].message.replace('Path ', '').replace(/`/g, '')
+    );
+    errorMessage = errorMessages.length ? errorMessages[0] : '';
+  }
+  errorMessage = errorMessage ? errorMessage : err.message;
+  res.json({ message: errorMessage || 'Internal Server Error' });
 });
 
 process.on('uncaughtException', (err) => {
