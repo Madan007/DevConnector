@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { ApiService } from './Service';
 
 class Register extends Component {
   constructor() {
@@ -17,11 +17,6 @@ class Register extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  getData = async (url, newUser) => {
-    const res = await axios.post(url, newUser);
-    return res;
-  };
-
   onSubmit = async (e) => {
     e.preventDefault();
     const newUser = {
@@ -30,7 +25,7 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2,
     };
-    const response = await this.getData('/api/v1/users/register', newUser);
+    const response = await ApiService('Register', 'POST', newUser);
     if (response.data.errorMessage)
       this.setState({ errors: response.data.errorMessage });
   };
