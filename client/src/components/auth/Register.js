@@ -17,7 +17,12 @@ class Register extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onSubmit = (e) => {
+  getData = async (url, newUser) => {
+    const res = await axios.post(url, newUser);
+    return res;
+  };
+
+  onSubmit = async (e) => {
     e.preventDefault();
     const newUser = {
       name: this.state.name,
@@ -25,11 +30,9 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2,
     };
-    console.log('new user..', newUser);
-    axios
-      .post('/api/v1/users/register', newUser)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log('Error....', err));
+    const response = await this.getData('/api/v1/users/register', newUser);
+    if (response.data.errorMessage)
+      this.setState({ errors: response.data.errorMessage });
   };
 
   render() {

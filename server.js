@@ -33,13 +33,17 @@ app.use((err, req, res, next) => {
   console.log('Caught Error in Application please handle it!', err);
   let errorMessage = '';
   if (err.name === 'ValidationError') {
-    const errorMessages = Object.keys(err.errors).map((field) =>
-      err.errors[field].message.replace('Path ', '').replace(/`/g, '')
-    );
-    errorMessage = errorMessages.length ? errorMessages[0] : '';
+    const errorMessages = Object.keys(err.errors).map((field) => {
+      return {
+        [field]: err.errors[field].message
+          .replace('Path ', '')
+          .replace(/`/g, ''),
+      };
+    });
+    errorMessage = errorMessages.length ? errorMessages : '';
   }
   errorMessage = errorMessage ? errorMessage : err.message;
-  res.json({ message: errorMessage || 'Internal Server Error' });
+  res.json({ errorMessage: errorMessage || 'Internal Server Error' });
 });
 
 process.on('uncaughtException', (err) => {

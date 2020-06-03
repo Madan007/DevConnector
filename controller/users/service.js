@@ -17,13 +17,13 @@ exports.register = async (name, email, password) => {
     throw { message: 'Email Already Exists' };
   }
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+  const hash = password ? await bcrypt.hash(password, salt) : '';
 
   const newUser = new User({
     name,
     email,
     avatar: null,
-    password: hash,
+    password: hash || '',
   });
   const user = await newUser.save();
   return user;
