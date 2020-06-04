@@ -31,18 +31,16 @@ app.use('*', (req, res) => {
 
 app.use((err, req, res, next) => {
   console.log('Caught Error in Application please handle it!', err);
-  let errorMessage = '';
+  let errorMessage = {};
   if (err.name === 'ValidationError') {
-    const errorMessages = Object.keys(err.errors).map((field) => {
-      return {
-        [field]: err.errors[field].message
-          .replace('Path ', '')
-          .replace(/`/g, ''),
-      };
+    Object.keys(err.errors).forEach((field) => {
+      errorMessage[field] = err.errors[field].message
+        .replace('Path ', '')
+        .replace(/`/g, '');
     });
-    errorMessage = errorMessages.length ? errorMessages : '';
+    errorMessage = Object.keys(errorMessage).length ? errorMessage : '';
   }
-  errorMessage = errorMessage ? errorMessage : err.message;
+  errorMessage = Object.keys(errorMessage).length ? errorMessage : err.message;
   res.json({ errorMessage: errorMessage || 'Internal Server Error' });
 });
 

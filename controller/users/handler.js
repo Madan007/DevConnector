@@ -17,7 +17,7 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
-  const token = userService.login(email, password);
+  const token = await userService.login(email, password);
   return res.json({
     message: 'Login Successfull',
     token: `Bearer ${token}`,
